@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mini-projet</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="header">
+<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+</div>
+
+<div class="topnav">
+  <a href="/TP_images/nsi1_2023/index.html">Accueil</a>
+  <a href="index.html">Thème</a>
+  <a class="active" href="page1.html">Principe mis en oeuvre</a>
+  <a href="page2.html">Programme Python</a>
+  <a href="page3.html">Compléments</a>
+</div>
+ 
+<div class="row">
+  <div class="column side">
+    
+    <img src="../images/logo-nsi.png" alt="logo nsi" width = 100 align="left">
+  </div>
+  
+  <div class="column middle">
+    <h2>Principe</h2>
+	<pre align="left">
+  Un pixel couleurs p est représenter par un triplet de trois composantes chromatiques :les trois couleurs(r,g,b)
+Pour appliquer un filtre a une image il faut donc appliquer une transformations à ces trois composantes, on appelleras les composantes chromatiques de p' (r',g',b')
+il faut donc disposé de 9 coefficient pour calculer p' cette transformation est sous la forme : r'=a0xr+a1xg+a2xb
+                                                                                                g'=b0xr+b1xg+b2xb
+                                                                                                b'=c0xr+c1xg+c2xb
+On peut représenter ces calculs a l'aide d'une multiplication matricielle :
+  </pre>
+  <img src="data/Matrice.png" alt="image-matrice" width = 250>
+  <pre align="left">
+ Exemple : Voici la matrice de coefficient utilisé pour transformer une image couleur en une image en noir et blanc 
+  </pre>
+  <img src="data/MatriceNb.png" alt="image-matricenb" width = 250>
+  <pre align="left">
+<h2><strong> <u>ATTENTION</u>: </strong></h2>si la somme des coefficients d'une ligne de la matrice est supérieur a 1 alors
+il faut fixer toute valeur au dessus de 255 à 255 et toute valeur négative à 0 pour éviter de sortir de l'intervalle [0,255]
+  </pre>
+  </div>
+  
+  <div class="column side">
+    <img src="../images/logo-python.png" alt="logo python" width = 100 align="right">
+  </div>
+</div>
+
+<div class="footer">
+<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+</div>
+
+</body>
+</html>

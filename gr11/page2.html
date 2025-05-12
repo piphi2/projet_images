@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Mini-projet</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .principe-box {
+      background-color: #f9f9f9;
+      border-left: 5px solid #4682B4;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+      font-size: 0.9em; 
+      line-height: 1.4em;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+      overflow-x: auto;
+      text-align: left;
+    }
+
+    .principe-box pre {
+      margin: 0;
+      padding: 0;
+      white-space: pre;
+    }
+
+    /* Style pour le bouton */
+    .copy-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #4682B4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    .copy-btn:hover {
+      background-color: #5b8bb0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+  </div>
+
+  <div class="topnav">
+    <a href="/TP_images/nsi1_2023/index.html">Accueil</a>
+    <a href="index.html">Thème</a>
+    <a href="page1.html">Principe mis en oeuvre</a>
+    <a class="active" href="page2.html">Programme Python</a>
+    <a href="page3.html">Compléments</a>
+  </div>
+   
+  <div class="row">
+    <div class="column side">
+      <img src="../images/logo-nsi.png" alt="logo nsi" width=100 align="left">
+    </div>
+    
+    <div class="column middle">
+      <h2>Programme Python</h2>
+
+      <div class="principe-box">
+        <h3>Code Python du projet :</h3>
+        <pre><code id="pythonCode">
+from PIL import Image
+
+def copier_image(image):
+    nouv_image = Image.new("RGB",(image.size))
+    for Y in range(image.size[1]):
+        for X in range(image.size[0]):
+            nouv_image.putpixel((X,Y),image.getpixel((X, Y)))
+    return nouv_image
+
+def cacher_message(image,message,sauv=False,show=False):
+    '''
+    cacher un message, une lettre (en binaire) pour 8 pixels,
+    le point de code ASCII de la lettre en binaire est caché avec le
+    LSB de la composante rouge
+    (en binaire) des 8 pixels
+    '''
+    i = 0                                                           # variable permettant de se déplacer dans l'octet
+    message = message + '$-FIN-$'
+    suiv_lettre=0                                                   # variable qui permet de changer de lettre du message
+    image_cach = copier_image(image)
+    for Y in range(image.size[1]):
+        for X in range(image.size[0]):
+            if suiv_lettre >= len(message):
+                break
+            lettre_bin = format(ord(message[suiv_lettre]), '08b')   # prend le point de code (ord) de la lettre numero {suiv_lettre}, le met en binaire (bin) sans '0b' au début ([2:])
+            RGB = image.getpixel((X, Y))                            # créé le tuple RGB du pixel 
+            RGB_bin = [bin(RGB[0])[2:], RGB[1], RGB[2]]             # copie le tuple RGB mais toutes les valeurs sont en binaire dans '0b' ([2:])
+            RGB_bin[0] = RGB_bin[0][:-1] + lettre_bin[i]            # change le LSB de la composante du pixel pour le chiffre {i} du point de code en binaire de la lettre {suiv_lettre} du message
+            RGB_new = (int(RGB_bin[0],2),RGB[1], RGB[2])            # RGB vaut maintenant RGB_bin converti en décimal
+            image_cach.putpixel((X,Y),RGB_new)                      # met à jour le pixel avec la nouvelle valeur
+            i += 1                                                  # incrémentation de l'index de la lettre binaire
+            if i == 8:                                              # si l'octet est complet, on passe à la lettre suivante
+                suiv_lettre += 1
+                i = 0
+        if suiv_lettre >= len(message):
+            break
+    if sauv == True:
+        image_cach.save("Image_MessageCache.png")
+    if show == True:
+        image_cach.show()
+    
+    return image_cach
+    
+def lire_message(image):
+    '''
+    Retourne le message caché dans l'image donnée
+    Le LSB de chaque pixel forme sur un octet une lettre, ces lettres composent un message
+    '''
+    message = ""
+    lettre_bin = ""
+    for Y in range(image.size[1]):
+        for X in range(image.size[0]):
+            R = image.getpixel((X, Y))[0]
+            R_bin = format(R, '08b')
+            lettre_bin += R_bin[-1]
+
+            if len(lettre_bin) == 8:
+                lettre = chr(int(lettre_bin, 2))
+                message += lettre
+                lettre_bin = ""
+
+                if message[-7:] == "$-FIN-$":
+                    return message[:-7]
+    if "$-FIN-$" != message:
+        return 'Cette image ne contient pas de message'
+    return message
+</code></pre>
+        <button class="copy-btn" onclick="copierTexte()">Copier le code</button>
+      </div>
+    </div>
+    
+    <div class="column side">
+      <img src="../images/logo-python.png" alt="logo python" width=100 align="right">
+    </div>
+  </div>
+
+  <div class="footer">
+    <h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+  </div>
+
+  <script type="text/javascript">
+    function copierTexte() {
+      var code = document.getElementById("pythonCode").innerText;
+
+      navigator.clipboard.writeText(code).then(function() {
+          alert('Code copié dans le presse-papier !');
+        }).catch(function(err) {
+          alert('Erreur lors de la copie : ' + err);
+        });
+    }
+  </script>
+
+</body>
+</html>

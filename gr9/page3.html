@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mini-projet</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+<div class="header">
+<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+</div>
+
+<div class="topnav">
+  <a href="/TP_images/nsi1_2023/index.html">Accueil</a>
+  <a href="index.html">Thème</a>
+  <a href="page1.html">Principe mis en oeuvre</a>
+  <a href="page2.html">Programme Python</a>
+  <a class="active" href="page3.html">Compléments</a>
+</div>
+ 
+<div class="row">
+  <div class="column side">
+    
+    <img src="../images/logo-nsi.png" alt="logo nsi" width = 100 align="left">
+  </div>
+  
+  <div class="column middle">
+<p>La détection et le comptage d’objets dans une image sont très utiles et sont utilisées dans de nombreux domaines :</p>
+  <ul align="left">
+    <li><strong>Industrie :</strong> compter des graines, fruits ou pièces pour vérifier la qualité ou la quantité d’un lot.</li>
+    <li><strong>Recherche scientifique :</strong> analyser des cellules, bactéries, atomes, étoiles... au microscope ou au téléscope en automatisant leur détection.</li>
+    <li><strong>Gestion logistique :</strong> suivre automatiquement des objets sur des tapis roulants dans des entrepôts.</li>
+    <li><strong>Sécurité :</strong> détecter la présence d'objets suspects, dans des images de surveillance ou satellites.</li>
+    <li><strong>Magasins sans intervention humaine :</strong>En comptant les objets en permanence, on pose les bases d'un supermarché automatique et sans caisses qui sait ce que l'on a pris
+  </ul>
+  <p>Ce projet n'est qu'une ébauche pour pouvoir créer ces applications : il permet de détecter, différencier et compter automatiquement les objets présents dans une image, ce qui peut être un point de départ pour des systèmes plus complexes basés sur l’intelligence artificielle ou le deep learning.</p>
+  <h2>Perspectives d'amélioration</h2>
+
+  <p>Même si ce programme fonctionne bien dans des cas simples, il présente des limitations qui réduisent son utilité.</p>
+
+  <ul align="left">
+    <li><strong>Support d'arrière-plans divers :</strong> Le traitement repose sur le fait que les objets se détachent nettement d’un fond majoritairement blanc. Si l’arrière-plan est sombre ou complexe, la détection s'arrête de fonctionner.</li>
+
+    <li><strong>Support de toutes le tailles d'objet :</strong> L'algorithme actuel suppose que les objets ont des dimensions relativement proches. Avec des objets de tailles très différentes, il pourrait soit en ignorer, soit fusionner plusieurs en un seul plus grand.</li>
+
+    <li><strong>Adaptation à d’autres types d’images :</strong> Le programme pourrait être généralisé à d’autres contextes en rendant le prétraitement plus dynamique selon les conditions de l’image.</li>
+  </ul>
+
+  <p>Pour aller plus loin, on pourrait également :</p>
+    <ul align="left">
+      <li>Ajouter une interface graphique pour ajuster les paramètres en temps réel (tolérance de couleur, seuil de surface, etc...).</li>
+      <li>Permettre le traitement de lots d’images pour automatiser l’analyse à grande échelle.</li>
+      <li>Tenter de faire marcher l'algorithme en temps réel, avec la caméra d'un téléphone portable par exemple</li>
+      <li>Classifier des objets en catégories : le programme pourrait (c'est très avancé) tenter de classifier les objets en chat, chien, voiture, visage, légume, graine, viande...</li>
+      <li>Tester le programme sur de nombreuses images pour essayer de l'améliorer et comprendre ses faiblesses.</li>
+    </ul>
+
+  <p>Ces améliorations pourraient créer un système de comptage plus polyvalent, capable de s'adapter à une plus grande variété d’images et de contextes.</p>
+</div>
+  
+  <div class="column side">
+    <img src="../images/logo-python.png" alt="logo python" width = 100 align="right">
+  </div>
+</div>
+
+<div class="footer">
+<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mini-projet</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+<div class="header">
+<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+</div>
+
+<div class="topnav">
+  <a href="/TP_images/nsi1_2023/index.html">Accueil</a>
+  <a href="index.html">Thème</a>
+  <a class="active" href="page1.html">Principe mis en oeuvre</a>
+  <a href="page2.html">Programme Python</a>
+  <a href="page3.html">Compléments</a>
+</div>
+ 
+<div class="row">
+  <div class="column side">
+    
+    <img src="../images/logo-nsi.png" alt="logo nsi" width = 100 align="left">
+  </div>
+  
+<div class="column middle">
+  <h2>Principe</h2>
+  <p>Ce programme analyse une image en niveaux de gris pour y compter le nombre d’objets distincts. Un "objet" est défini comme un groupe de pixels connectés qui ne sont pas blancs (c’est-à-dire avec une intensité différente de 255).</p>
+  
+  <p>Pour faciliter cette détection, l’image est d’abord blanchie progressivement. L’idée est de supprimer le bruit et de mieux séparer les objets proches ou collés. Le programme s’assure que l’image contient au moins 82 % de pixels blancs avant de commencer l’analyse.</p>
+
+  <p>Voici les étapes principales :</p>
+  <ol>
+      <img src="data/pois_chiches.jpg" alt="original" width="250">
+      <img src="data/graines_2.jpg" alt="original" width="250">
+    <li><strong>Prétraitement :</strong> L’image est convertie en niveaux de gris puis blanchie par étapes. Un filtre spécial applique un effet similaire à une érosion douce, éclaircissant progressivement les zones proches du blanc jusqu’à atteindre un niveau de clarté suffisant.
+<img src="data/figure_preprocessing.png" alt="diagramme preprocessing" width=1300>
+<p>Comme on peut le voir sur ce diagramme, lorsque la valeur du filtre de moyenne est assez blanche (>240 par example), on remplace par du blanc (255), les perturbations disparaissent et les contours s'affinent</p>
+<img src="data/figure_preprocessing_2.png" alt="diagramme preprocessing" width=1300>
+<p>Cela permet aussi de séparer des objets se touchant mais sur une faible zone comme le montre le diagramme ci-dessus</p>
+    <div>
+      <img src="data/graines_2_step_1.jpg" alt="étape 1" width="250">
+      <img src="data/graines_2_step_2.jpg" alt="étape 2" width="250">
+      <img src="data/graines_2_step_3.jpg" alt="étape 3" width="250">
+      <img src="data/graines_2_step_4.jpg" alt="étape 4" width="250">
+      <img src="data/graines_2_step_5.jpg" alt="étape 5" width="250">
+      <img src="data/graines_2_step_6.jpg" alt="étape 6" width="250">
+      <img src="data/graines_2_step_7.jpg" alt="étape 7" width="250">
+    </div>
+    <div>
+      <img src="data/pois_chiches_step_1.jpg" alt="étape 1" width="250">
+      <img src="data/pois_chiches_step_2.jpg" alt="étape 2" width="250">
+      <img src="data/pois_chiches_step_3.jpg" alt="étape 3" width="250">
+      <img src="data/pois_chiches_step_4.jpg" alt="étape 4" width="250">
+    </div>
+  </li>
+    
+    <li><strong>Détection des objets :</strong> Une exploration aléatoire est effectuée sur l’image pour détecter les régions connectées de pixels non blancs. Chaque région est considérée comme un objet potentiel si elle est suffisamment grande. On agrandit un objet si assez peu (moins de 9) de ses voisins de matrice 5x5 sont blancs, ici dont la valeur excède 240. Dans le diagramme suivant, seuls 4 pixels sont "blancs" ainsi il est ajouté a l'objet environnent</li><img src="data/fenetre_5x5_diagramme.png" alt="diagramme compter voisins 5x5" width="300">
+    
+    <li><strong>Délimitation des objets :</strong> Pour chaque objet détecté, une boîte englobante est calculée (un rectangle minimal contenant tous ses pixels), ainsi que sa surface (en nombre de pixels).</li>
+    
+    <li><strong>Identification des anomalies :</strong> Si la surface d’un objet dépasse largement (plus de 82 %) la moyenne des surfaces détectées, il est considéré comme anormalement grand — possiblement une fusion de plusieurs objets mal séparés.</li>
+    
+    <li><strong>Visualisation :</strong> Une image en couleur est générée, avec chaque objet représenté par une couleur unique. Les objets suspects sont entourés d’un rectangle bleu, les autres en rouge, pour un repérage visuel rapide.</li>
+    <div>
+      <img src="data/cercles_1_output.jpg" alt="output" width="250">
+      <img src="data/cercles_2_output.jpg" alt="output" width="250">
+      <img src="data/cercles_3_output.jpg" alt="output" width="250">
+      <img src="data/cercles_4_output.jpg" alt="output" width="250">
+      <img src="data/graines_1_output.jpg" alt="output" width="250">
+      <img src="data/objets_output.jpg" alt="output" width="250">
+      <img src="data/pois_chiches_output.jpg" alt="output" width="250">
+      <img src="data/graines_2_output.jpg" alt="output" width="250">
+
+    </div>
+    
+    <li><strong>Correction des objets fusionnés :</strong> Les objets anormalement grands sont réanalysés localement dans leurs régions pour essayer de les diviser en plusieurs objets distincts. On recompte les objets dans chaque zone en changeant la limite de voisins blancs à 1, ce qui permet de séparer les objets à peine collés, ainsi le pixel du diagramme vu plus haut n'aurait pas été ajouté. Cela corrige le comptage final, qui est de 80 pour les graines de courges et 19 pour les pois chiches.</li>
+  </ol>
+
+  <p>Le programme retourne ensuite le nombre total d’objets détectés dans l’image, y compris ceux identifiés après correction des doublons.</p>
+</div>
+  
+  <div class="column side">
+    <img src="../images/logo-python.png" alt="logo python" width = 100 align="right">
+  </div>
+</div>
+
+<div class="footer">
+<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+</div>
+
+</body>
+</html>

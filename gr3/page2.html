@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mini-projet</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+<div class="header">
+<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+</div>
+
+<div class="topnav">
+  <a href="/TP_images/nsi1_2023/index.html">Accueil</a>
+  <a href="index.html">Thème</a>
+  <a href="page1.html">Principe mis en oeuvre</a>
+  <a class="active" href="page2.html">Programme Python</a>
+  <a href="page3.html">Compléments</a>
+</div>
+ 
+<div class="row">
+  <div class="column side">
+    
+    <img src="../images/logo-nsi.png" alt="logo nsi" width = 100 align="left">
+  </div>
+  
+  <div class="column middle" >
+    <h2>Programme Python</h2>
+	<pre align="left">
+    from PIL import Image #A partir de la librairie PIL on importe le module Image
+
+image = Image.open("NYC.jpg") #On importe l'image
+largeur, hauteur = image.size #On crée un tuple contenant les composantes largeur hauteur
+
+def reduire_image(image, f_reduction):
+    """Création d'une nouvelle image réduite"""
+    nouvelle_largeur = largeur // f_reduction
+    nouvelle_hauteur = hauteur // f_reduction
+    nouvelle_image = Image.new("RGB", (nouvelle_largeur, nouvelle_hauteur))
+
+    for y in range(0,hauteur,f_reduction):
+        for x in range(0,largeur,f_reduction):
+            pixel = image.getpixel((x,y))
+            nouvelle_image.putpixel((x//f_reduction, y//f_reduction), pixel)
+
+    nouvelle_image.save("img_reduite.jpg") #sauvegarde
+
+reduire_image(image, 3) 
+	</pre>
+  </div>
+  
+  <div class="column side">
+    <img src="../images/logo-python.png" alt="logo python" width = 100 align="right">
+  </div>
+</div>
+
+<div class="footer">
+<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+</div>
+
+</body>
+</html>

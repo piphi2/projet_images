@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mini-projet</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .compléments-box {
+    background-color: #f9f9f9;
+    border-left: 5px solid #4682B4;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    font-size: 0.9em; 
+    line-height: 1.4em;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    text-align: left;
+  }
+  .principe-box pre {
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+  }
+
+  /* Style pour le bouton */
+  .copy-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #4682B4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+/* Style du bouton quand on passe la souris dessus */
+  .copy-btn:hover {
+    background-color: #5b8bb0;
+  }
+</style>
+</head>
+
+<body>
+<div class="header">
+<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+</div>
+
+<div class="topnav">
+  <a href="/TP_images/nsi1_2023/index.html">Accueil</a>
+  <a href="index.html">Thème</a>
+  <a href="page1.html">Principe mis en oeuvre</a>
+  <a href="page2.html">Programme Python</a>
+  <a class="active" href="page3.html">Compléments</a>
+</div>
+
+<div class="row">
+  <div class="column side">
+    <img src="../images/logo-nsi.png" alt="logo nsi" width=100 align="left">
+  </div>
+  
+  <div class="column middle">
+    <h2>Voici le code où nous pouvons choisir la composante RGB pour cacher le message :</h2>
+    <div class="compléments-box">
+	 <h3>Code Python avec plusieurs choix de composantes :</h3>
+        <pre><code id="pythonCode">
+from PIL import Image
+
+def copier_image(image):
+    nouv_image = Image.new("RGB", image.size)
+    for Y in range(image.size[1]):
+        for X in range(image.size[0]):
+            nouv_image.putpixel((X, Y), image.getpixel((X, Y)))
+    return nouv_image
+
+def cacher_message(image, message, composante='R', sauv=False, show=False):
+    '''
+    cacher un message, une lettre (en binaire) pour 8 pixels,
+    le point de code ASCII de la lettre en binaire est caché avec le
+    LSB de la composante rouge (ou verte ou bleue) des 8 pixels
+    '''
+    i = 0
+    message = message + '$-FIN-$'
+    suiv_lettre = 0
+    image_cach = copier_image(image)
+    comp_id = {'R': 0, 'G': 1, 'B': 2}[composante]
+
+    for Y in range(image.size[1]):
+        for X in range(image.size[0]):
+            if suiv_lettre >= len(message):
+                break
+            lettre_bin = format(ord(message[suiv_lettre]), '08b')  # Convertit la lettre en code ASCII puis en binaire sur 8 bits
+            RGB = list(image.getpixel((X, Y)))                     # Récupère la couleur (R, G, B) du pixel sous forme de liste
+            bin_val = format(RGB[comp_id], '08b')                  # Convertit la composante choisie (R/G/B) en binaire sur 8 bits
+            bin_val = bin_val[:-1] + lettre_bin[i]                 # Remplace le LSB de cette composante par le bit du message
+            RGB[comp_id] = int(bin_val, 2)                         # Convertit la nouvelle valeur binaire en entier
+            image_cach.putpixel((X, Y), tuple(RGB))                # Remplace le pixel par le nouveau avec le bit caché
+
+            i += 1
+            if i == 8:
+                suiv_lettre += 1
+                i = 0
+        if suiv_lettre >= len(message):
+            break
+
+    if sauv:
+        image_cach.save("Image_MessageCache.png")
+    if show:
+        image_cach.show()
+    
+    return image_cach
+
+def lire_message(image, composante='R'):
+    '''
+    Retourne le message caché dans l'image donné,
+    en lisant le LSB de la composante rouge (ou verte ou bleue)
+    '''
+    message = ""
+    lettre_bin = ""
+    comp_id = {'R': 0, 'G': 1, 'B': 2}[composante]
+
+    for Y in range(image.size[1]):
+        for X in range(image.size[0]):
+            val = image.getpixel((X, Y))[comp_id]
+            val_bin = format(val, '08b')
+            lettre_bin += val_bin[-1]
+
+            if len(lettre_bin) == 8:
+                lettre = chr(int(lettre_bin, 2))
+                message += lettre
+                lettre_bin = ""
+
+                if message[-7:] == "$-FIN-$":
+                    return message[:-7]
+    if "$-FIN-$" != message:
+        return 'Cette image ne contient pas de message'
+    return message
+        </code></pre>
+        <button class="copy-btn" onclick="copierTexte()">Copier le code</button>
+    </div>
+  </div>
+  
+  <div class="column side">
+    <img src="../images/logo-python.png" alt="logo python" width=100 align="right">
+  </div>
+</div>
+
+<div class="footer">
+<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+</div>
+
+</body>
+
+<script type="text/javascript">
+  function copierTexte() {
+  var code = document.getElementById("pythonCode").innerText;
+
+  navigator.clipboard.writeText(code).then(function() {
+      alert('Code copié dans le presse-papier !');
+    }).catch(function(err) {
+      alert('Erreur lors de la copie : ' + err);
+    });
+  }
+</script>
+
+</html>

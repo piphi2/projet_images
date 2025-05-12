@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mini-projet</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="header">
+<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+</div>
+
+<div class="topnav">
+  <a href="/TP_images/nsi1_2023/index.html">Accueil</a>
+  <a href="index.html">Thème</a>
+  <a href="page1.html">Principe mis en oeuvre</a>
+  <a class="active" href="page2.html">Programme Python</a>
+  <a href="page3.html">Compléments</a>
+</div>
+ 
+<div class="row">
+  <div class="column side">
+    
+    <img src="../images/logo-nsi.png" alt="logo nsi" width = 100 align="left">
+  </div>
+  
+  <div class="column middle" >
+    <h2>Programme Python</h2>
+	<pre align="left">
+	#On importe les modules exterieur:
+	from PIL import Image
+	from random import random
+
+	#fonction qui modifiant une image donnée a partir d'un filtre
+	def filtre(image,filtre):
+		img=Image.open(image)
+		print(img.size)
+		for i in range (img.size[0]):
+			for j in range (img.size[1]):
+				(r,v,b)=img.getpixel((i, j))
+				r1=int(r*filtre[0][0]+v*filtre[0][1]+b*filtre[0][2])
+				v1=int(r*filtre[1][0]+v*filtre[1][1]+b*filtre[1][2])
+				b1=int(r*filtre[2][0]+v*filtre[2][1]+b*filtre[2][2])
+				img.putpixel((i,j),((r1,v1,b1)))
+		img.show()
+
+
+	#Programme principal:Banque de filtre sous forme de matrice de coefficient
+	niveau_de_gris=[[0.2126,0.7152,0.0722],[0.2126,0.7152,0.0722],[0.2126,0.7152,0.0722]]
+	sepia=[[0.393,0.769,0.189],[0.349,0.686,0.168],[0.272,0.534,0.131]]
+	normal=[[1,0,0],[0,1,0],[0,0,1]]
+	rouge=[[1,0,0],[0,0,0],[0,0,0]]
+	bleu=[[0,0,0,],[0,0,0],[0,0,1]]
+	cuba=[[1,0,0],[0,1,0],[0,0,0,]]
+	eclaircir=[[1.5,0,0],[0,1.5,0],[0,0,1.5]]
+	assombrir=[[0.5,0,0],[0,0.5,0],[0,0,0.5]]
+	negatif=[[0,1,1],[1,0,1],[1,1,0]]
+	random=[[random() for i in range (3)]for j in range (3)]
+
+	</pre>
+  </div>
+  
+  <div class="column side">
+    <img src="../images/logo-python.png" alt="logo python" width = 100 align="right">
+  </div>
+</div>
+
+<div class="footer">
+<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+</div>
+
+</body>
+</html>

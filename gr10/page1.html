@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<title>Mini-projet de stéganographie</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="../style.css">
+	</head>
+
+	<body>
+		<div class="header">
+			<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+		</div>
+
+		<div class="topnav">
+			<a href="/TP_images/nsi1_2023/index.html">Accueil</a>
+			<a href="index.html">Thème</a>
+			<a class="active" href="page1.html">Principe mis en oeuvre</a>
+			<a href="page2.html">Programme Python</a>
+			<a href="page3.html">Compléments</a>
+		</div>
+ 
+		<div class="row">
+			<div class="column side">
+				<img src="../images/logo-nsi.png" alt="logo nsi" width = 100 align="left">
+			</div>
+  
+			<div class="column middle">
+				<h2>Principe</h2>
+				
+		
+				<ol>
+					<li>
+				
+					<div class="premiere-etape" style="display:flex;justify-content:space-between">
+						<div style="display:flex;flex-direction:column">
+							<h3 style="text-align:center">Illustration</h3>
+							
+							<img style="width:350px;margin:5px" src="data/etape 1.jpeg" alt="dessin étape 1">
+						</div>
+						
+						<div style="display:flex;flex-direction:column">
+							<h3 style="text-align:center">Images</h3>
+							
+							<div style="display:flex;flex-direction:row">
+								<img style="margin:5px;width:200px" src="data/science.png" alt="receptacle">
+								<img style="vertical-align:top;margin:10px;width:30px" src="data/arrow.png" alt="fleche">
+								<img style="margin:5px;width:200px" src="data/science_modifiee.png" alt="receptacle-modifie">
+							</div>
+						</div>
+						
+					</div>
+					
+					<p>Premièrement, on prépare l'image qui va servir de réceptacle en enlevant les nuances. Informatiquement, cela se traduit par "enlever" les 4 LSB de 
+					chaque composante rouge, bleue et jaune de chaque pixel de l'image dans une première fonction, c'est-à-dire les mettre à 0 en faisant l'opération 
+					"octet d'intensité" - ("octet d'intensité" % (modulo) 16) et donc garder seulement les 4 LSB.</p>
+					</li>
+					
+					
+					
+					<li>
+					<div class="deuxieme-etape">
+							<h3 style="text-align:center">Illustration</h3>
+							
+							<img style="width:500px;padding:10px" src="data/etape 2.jpeg" alt "dessin étape 2">
+					</div>
+					
+					<p>Deuxièmement, on répète le processus précédent. On récupère les 4 MSB de chaque nuance de chaque couleur de l'image à cacher avec le calcul d'une 
+					deuxième fonction : on met à zéro les 4 LSB puis cette fois on divise le tout par 16 afin que les bits puissent avoir la place de LSB. C'est l'information 
+					la plus importante de l'image cachée qu'on pourra récupérer lors de processus de déchiffrage. On ne transforme pas ces informations en une nouvelle image 
+					mais on les extrait cependant.</p>
+					</li>
+					
+					
+					
+					<li>
+					<div class="troisieme-etape" style="display:flex;justify-content:space-between">
+					
+						<div style="display:flex;flex-direction:column">
+							<h3 style="text-align:center">Illustration</h3>
+							
+							<img style="width:250px;margin:5px" src="data/etape 3.jpeg" alt="dessin étape 3">
+						</div>
+						
+						<div style="display:flex;flex-direction:column">
+							<h3 style="text-align:center">Images</h3>
+							
+							<div style="display:flex;flex-direction:row">
+								
+								<div style="display:flex;flex-direction:column">
+									<img style="margin:5px;width:100px" src="data/science.png" alt="receptacle">
+									<p>+</p>
+									<p style="margin:5px;width:100px;border:solid">MSB de l'image à cacher divisés par 16</p>
+								</div>
+								
+								<img style="vertical-align:top;margin:5px;width:50px" src="data/arrow.png" alt="fleche">
+								<img style="margin:5px;width:200px" src="data/science avec hacker caché.png" alt="receptacle-modifie">
+							</div>
+						</div>
+						
+					</div>
+					<p>Enfin, on va additionner pour chaque nuance de chaque pixel les 4 MSB avec LSB à zéro de l'image réceptacle aux 4 MSB de l'image qu'on veut cacher 
+					divisés par 16 en tant que LSB de l'image réceptacle. On obtient donc l'image finale.</p>
+					</li>
+					
+				</div>
+				</ol>
+				
+				
+			</li>
+			
+			<div class="column side">
+				<img src="../images/logo-python.png" alt="logo python" width = 100 align="right">
+			</div>
+		</div>
+
+		<div class="footer">
+			<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+		</div>
+
+	</body>
+</html>

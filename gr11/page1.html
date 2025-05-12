@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mini-projet</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .principe-box {
+    background-color: #f9f9f9;
+    border-left: 5px solid #4682B4;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    line-height: 1.6em;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  }
+</style>
+</head>
+
+<body>
+<div class="header">
+<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+</div>
+
+<div class="topnav">
+  <a href="/TP_images/nsi1_2023/index.html">Accueil</a>
+  <a href="index.html">Thème</a>
+  <a class="active" href="page1.html">Principe mis en oeuvre</a>
+  <a href="page2.html">Programme Python</a>
+  <a href="page3.html">Compléments</a>
+</div>
+ 
+<div class="row">
+  <div class="column side">
+    <img src="../images/logo-nsi.png" alt="logo nsi" width=100 align="left">
+  </div>
+  
+  <div class="column middle">
+    <h2>Principe</h2>
+    <div class="principe-box">
+      Le programme utilise le principe de la <strong>stéganographie</strong>, c’est-à-dire l’art de cacher un message dans un autre support, ici une image.<br><br>
+      Chaque lettre du message est transformée en <strong>binaire sur 8 bits</strong>, puis chaque bit est caché dans le <em>bit de poids faible (LSB)</em> de la composante rouge de pixels successifs.<br><br>
+      Ainsi, une lettre est répartie sur 8 pixels. À la fin du message, un marqueur spécial est ajouté (<code>"$-FIN-$"</code>) pour détecter la fin lors de la lecture.<br><br>
+      Pour lire le message, le programme extrait les LSB des pixels rouges, les regroupe 8 par 8 pour reconstituer les lettres, et s’arrête automatiquement dès qu’il trouve le marqueur de fin.
+    </div>
+  </div>
+  
+  <div class="column side">
+    <img src="../images/logo-python.png" alt="logo python" width=100 align="right">
+  </div>
+</div>
+
+<div class="footer">
+<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+</div>
+
+</body>
+</html>

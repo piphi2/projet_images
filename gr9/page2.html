@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mini-projet</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+<div class="header">
+<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+</div>
+
+<div class="topnav">
+  <a href="/TP_images/nsi1_2023/index.html">Accueil</a>
+  <a href="index.html">Thème</a>
+  <a href="page1.html">Principe mis en oeuvre</a>
+  <a class="active" href="page2.html">Programme Python</a>
+  <a href="page3.html">Compléments</a>
+</div>
+ 
+<div class="row">
+  <div class="column side">
+    
+    <img src="../images/logo-nsi.png" alt="logo nsi" width = 100 align="left">
+  </div>
+  
+  <div class="column middle" >
+    <h2>Programme Python</h2>
+	<pre align="left">
+import sys
+import numpy as np
+from PIL import Image, ImageDraw
+from random import randint
+from scipy.ndimage import uniform_filter
+
+def compter_voisins_blancs_5x5(image_gris, i, j):
+    """
+    Compte le nombre de pixels blancs parmi les 24 voisins d'un pixel dans une fenêtre 5x5.
+
+    Un pixel est considéré comme blanc s’il a une valeur supérieure à 240.
+
+    Paramètres :
+    - image_gris (np.ndarray) : Image en niveaux de gris (valeurs de 0 à 255), tableau 2D.
+    - i (int) : Coordonnée verticale du pixel central.
+    - j (int) : Coordonnée horizontale du pixel central.
+
+    Retourne :
+    - int : Nombre de voisins blancs dans la fenêtre 5x5 centrée sur (i, j), excluant le centre.
+    """
+    hauteur, largeur = image_gris.shape
+    compteur = 0
+    for di in range(-2, 3):  # de -2 à +2 inclus
+        for dj in range(-2, 3):
+            if di == 0 and dj == 0:
+                continue  # On ignore le pixel central
+            ni, nj = i + di, j + dj
+            if 0 <= ni < hauteur and 0 <= nj < largeur:
+                if image_gris[ni, nj] > 240:
+                    compteur += 1
+    return compteur
+
+def calcul_score_clarte(image_gris, seuil_voisins_blancs):
+    """
+    Calcule un score de clarté basé sur le nombre de pixels ayant suffisamment de voisins blancs
+    dans une fenêtre 5x5 centrée sur chaque pixel.
+
+    Un pixel est considéré comme "clair" s’il a plus que `seuil_voisins_blancs` pixels blancs parmi
+    ses 24 voisins dans une matrice 5x5.
+
+    Paramètres :
+    - image_gris (np.ndarray) : Image en niveaux de gris (valeurs de 0 à 255), tableau 2D.
+    - seuil_voisins_blancs (int) : Seuil minimum de voisins blancs pour qu’un pixel soit comptabilisé.
+
+    Retourne :
+    - int : Nombre de pixels ayant suffisamment de voisins blancs.
+    """
+    hauteur, largeur = image_gris.shape
+    compteur = 0
+    for i in range(hauteur):
+        for j in range(largeur):
+            if compter_voisins_blancs_5x5(image_gris, i, j) > seuil_voisins_blancs:
+                compteur += 1
+    return compteur
+
+def blanchir_si_proche_du_blanc(arr, seuil=240):
+    """
+    Remplace les pixels d’une image en niveaux de gris par du blanc (255) s’ils sont localement
+    proches du blanc, selon un seuil défini.
+
+    Étapes :
+    1. Les pixels dont la valeur est supérieure au seuil sont directement blanchis (255).
+    2. Une moyenne locale (filtre 3x3) est appliquée à l’image blanchie.
+    3. Si la moyenne locale d’un pixel dépasse le seuil, il est aussi mis à blanc.
+
+    Paramètres :
+    - arr (np.ndarray) : Image en niveaux de gris (uint8), tableau 2D.
+    - seuil (int) : Valeur de seuil au-dessus de laquelle un pixel ou sa moyenne locale est considéré comme blanc.
+
+    Retourne :
+    - np.ndarray : Image transformée, avec les pixels blanchis selon les critères.
+    """
+    # Étape 1 : Blanchiment initial selon le seuil
+    blanchis = np.where(arr > seuil, 255, arr)
+
+    # Étape 2 : Calcul de la moyenne locale (matrice 3x3 autour de chaque pixel)
+    moyenne_locale = uniform_filter(blanchis.astype(np.float32), size=3, mode='reflect')
+
+    # Étape 3 : Blanchiment final selon la moyenne locale
+    return np.where(moyenne_locale > seuil, 255, blanchis).astype(np.uint8)
+
+
+def voisins(i, j, largeur, hauteur):
+    """
+    Génère les coordonnées des voisins immédiats (8-connectivité) d’un pixel donné,
+    en s'assurant qu'ils restent dans les limites de l'image.
+
+    Paramètres :
+    - i (int) : Ligne du pixel central.
+    - j (int) : Colonne du pixel central.
+    - largeur (int) : Largeur de l'image.
+    - hauteur (int) : Hauteur de l'image.
+
+    Rend :
+    - (ni, nj) (tuple[int, int]) : Coordonnées de chaque voisin valide (dans l'image et différent du pixel central).
+    """
+    for delta_i in [-1, 0, 1]:
+        for delta_j in [-1, 0, 1]:
+            if delta_i == 0 and delta_j == 0:
+                continue  # Ignore le pixel central
+            ni, nj = i + delta_i, j + delta_j
+            if 0 <= ni < hauteur and 0 <= nj < largeur:
+                yield ni, nj # ignore les pixels qui dépassent de l'image
+
+def pre_traitement(nom_fichier):
+    """
+    Applique un prétraitement sur une image en niveaux de gris afin de la clarifier progressivement
+    jusqu'à atteindre un seuil de "netteté" défini.
+
+    Cette fonction charge une image en niveaux de gris, puis applique de manière itérative un filtre
+    qui blanchit les pixels proches du blanc (selon un seuil décroissant). À chaque itération,
+    elle mesure la proportion de pixels ayant au moins 15 voisins blancs dans leur voisinage 5x5.
+    Le processus s'arrête lorsque cette proportion dépasse 82 %.
+
+    Paramètres :
+    - nom_fichier (str) : Chemin vers le fichier image à traiter (formats supportés par PIL, ex: PNG, JPG).
+
+    Retour :
+    - image_filtree : Tableau NumPy 2D (dtype=uint8) représentant l'image prétraitée.
+    """
+    POURCENTAGE_MINIMUM_DE_BLANC=0.82
+    seuil = 255
+    proportion_claire = 0
+
+    # Chargement de l'image en niveaux de gris
+    image_originale = np.array(Image.open(nom_fichier).convert("L"))
+
+    # Boucle de clarification progressive jusqu'à obtenir une image suffisamment "claire"
+    while proportion_claire < POURCENTAGE_MINIMUM_DE_BLANC:
+        image_filtree = blanchir_si_proche_du_blanc(image_originale.copy(), seuil)
+        proportion_claire = calcul_score_clarte(image_filtree, 15) / image_filtree.size
+        print("DEBUG : Proportion de pixels clairs :", proportion_claire)
+        seuil -= 20  # Abaisse le seuil pour inclure plus de pixels à blanchir
+
+    return image_filtree
+
+def extraire_objets(matrice_gris, max_voisins_blancs=9):
+    """
+    Détecte et extrait les objets présents dans une image en niveaux de gris (tableau NumPy 2D).
+
+    Cette fonction explore aléatoirement l'image pour détecter les zones composées de pixels non blancs (valeur ≠ 255).
+    Chaque groupe de pixels connectés est considéré comme un objet potentiel.
+    Un pixel est ajouté à un objet seulement si :
+    - Il n'est pas déjà visité,
+    - Sa valeur est différente de 255 (non blanc),
+    - Il a moins de `max_voisins_blancs` voisins blancs dans sa matrice 5x5.
+
+    Seuls les objets dépassant une taille minimale de 150 pixels sont conservés.
+
+    Paramètres :
+    - image_gris : Image en niveaux de gris sous forme de tableau NumPy 2D.
+    - max_voisins_blancs (int) : Nombre maximal de voisins blancs autorisé dans une matrice 5x5
+      pour inclure un pixel dans un objet.
+
+    Retourne :
+    - objets : Liste des objets détectés, chaque objet étant représenté
+      par un ensemble de coordonnées (i, j) des pixels qui le composent.
+    """
+    TAILLE_MIN_OBJET = 150
+    
+    hauteur, largeur = matrice_gris.shape
+    visites = np.zeros(matrice_gris.shape, dtype=bool)
+    objets = []
+    total_trouves = 0
+
+    for _ in range(10000):
+        i, j = randint(0, hauteur - 1), randint(0, largeur - 1)
+        if visites[i, j] or matrice_gris[i, j] == 255:
+            continue
+        objet = set()
+        pile = [(i, j)]
+        while pile:
+            ci, cj = pile.pop()
+            if not visites[ci, cj] and matrice_gris[ci, cj] != 255:
+                visites[ci, cj] = True
+                objet.add((ci, cj))
+                for ni, nj in voisins(ci, cj, largeur, hauteur):
+                    if not visites[ni, nj] and compter_voisins_blancs_5x5(matrice_gris, ni, nj) < max_voisins_blancs:
+                        pile.append((ni, nj))
+        total_trouves += 1
+        if len(objet) > TAILLE_MIN_OBJET:
+            objets.append(objet)
+
+    print("Nombre d'objets détectés :", len(objets))
+    print("DEBUG : Nombre total d'entités explorées :", total_trouves)
+    return objets
+
+def correction_des_doublons(matrice_gris, boites_englobantes, objets_anormaux):
+    """
+    Corrige les doublons parmi les objets détectés en divisant ceux dont la surface est anormalement grande.
+    
+    Cette fonction prend la liste des boîtes englobantes et des objets considérés comme anormaux (trop grands),
+    extrait leur zone dans l’image `arr`, et tente de recompter les objets dans cette sous-région en relançant
+    l’analyse de segmentation dessus.
+
+    Paramètres :
+    - arr : Image prétraitée en niveaux de gris.
+    - bounding_boxes : Boîtes englobantes des objets détectés.
+    - objets_anormaux : Liste booléenne indiquant si chaque objet est anormalement grand.
+
+    Retourne :
+    - int : Nombre d’objets supplémentaires détectés à l’intérieur des zones anormales.
+    """
+    objets_supplementaires = 0
+    for i in range(len(boites_englobantes)):
+        if objets_anormaux[i]:
+            # Extraction de la matrice de la sou-image correspondant à la boîte englobante
+            min_j, min_i, max_j, max_i = boites_englobantes[i]
+            sous_matrice = matrice_gris[min_i:max_i+1, min_j:max_j+1]
+            
+            # Extraction des sous-objets avec un filtre très durci (aucun des pixels de la matrice 5x5 environente de dois etre à peu près blanc
+            sous_objects = extraire_objets(sous_matrice, 1) 
+            if len(sous_objects) > 1:
+                objets_supplementaires += len(sous_objects) - 1  # on a déjà compté l’objet "fusionné"
+    return objets_supplementaires
+
+def calculer_boites_et_surfaces(objets):
+    """
+    Calcule les rectangles englobants (bounding boxes) et les surfaces associées
+    pour une liste d’objets détectés dans une image.
+
+    Paramètres :
+    - objets : Liste d’objets, chacun étant un ensemble de coordonnées (i, j).
+
+    Retourne :
+    - boites_englobante : Liste des rectangles englobants sous la forme 
+      (min_colonne, min_ligne, max_colonne, max_ligne).
+    - surfaces : Liste des surfaces (en nombre de pixels) de chaque rectangle englobant.
+    """
+    boites_englobantes = []
+    surfaces = []
+
+    for objet in objets:
+        # A l'aide de numpy, on trouve les les valeurs x et y min et max dans les coordonnées
+        coordonnees = np.array(list(objet))
+        min_i, min_j = coordonnees.min(axis=0)
+        max_i, max_j = coordonnees.max(axis=0)
+
+        surface = (max_i - min_i) * (max_j - min_j)
+
+        boites_englobantes.append((min_j, min_i, max_j, max_i))  # Format (x0, y0, x1, y1)
+        surfaces.append(surface)
+    
+    return boites_englobantes, surfaces
+
+def visualisation(matrice_gris, liste_objets, boites_englobantes, objets_trop_grands):
+    """
+    Affiche une image couleur montrant chaque objet détecté avec une couleur unique.
+    Les boîtes englobantes sont tracées : en bleu pour les objets anormalement grands, en rouge sinon.
+
+    Paramètres :
+    - matrice_gris : Image en niveaux de gris (utilisée uniquement pour ses dimensions).
+    - liste_objets : Liste des objets détectés, chacun étant un ensemble de coordonnées (i, j).
+    - boites_englobantes : Liste des rectangles englobants [(min_j, min_i, max_j, max_i)].
+    - objets_trop_grands : Liste booléenne indiquant si un objet est considéré comme anormalement grand.
+    """
+    hauteur, largeur = matrice_gris.shape
+    image_couleur = np.zeros((hauteur, largeur, 3), dtype=np.uint8)
+
+    # Coloration des objets avec une couleur aléatoire
+    for objet in liste_objets:
+        couleur = np.random.randint(0, 255, size=3, dtype=np.uint8)
+        for i, j in objet:
+            image_couleur[i, j] = couleur
+
+    # Dessin des rectangles englobants
+    image_finale = Image.fromarray(image_couleur)
+    dessin = ImageDraw.Draw(image_finale)
+    for i in range(len(boites_englobantes)):
+        couleur = "blue" if objets_trop_grands[i] else "red"
+        dessin.rectangle(boites_englobantes[i], outline=couleur, width=3)
+
+    image_finale.show()
+
+def compter_objets(nom_fichier):
+    """
+    Fonction principale pour compter les objets distincts présents dans une image en niveaux de gris.
+    
+    Étapes :
+    1. Prétraitement de l'image pour supprimer le bruit et améliorer la détection des objets.
+    2. Détection des objets par exploration de voisinage et regroupement de pixels.
+    3. Calcul des boîtes englobantes et des surfaces associées à chaque objet détecté.
+    4. Identification des objets anormalement grands (potentiellement des doublons fusionnés).
+    5. Affichage visuel des objets avec surlignage des objets anormaux.
+    6. Correction des objets anormaux en essayant de les diviser en sous-objets.
+
+    Paramètre :
+    - nom_fichier (str) : Nom du fichier image à analyser (doit être une image lisible par PIL).
+
+    Retour :
+    - int : Nombre total d’objets détectés, y compris les objets corrigés séparément dans les doublons.
+    """
+
+    # Étape 1 : Prétraitement pour éclaircir l’image jusqu’à ce qu’une majorité de pixels soient considérés comme “blancs”
+    matrice_gris = pre_traitement(nom_fichier)
+
+    # Étape 2 : Extraction des objets présents dans l’image prétraitée
+    liste_objets = extraire_objets(matrice_gris)
+
+    # Étape 3 : Calcul des boîtes englobantes et des surfaces de chaque objet détecté
+    boites_englobantes, surfaces = calculer_boites_et_surfaces(liste_objets)
+    surface_moyenne = sum(surfaces) / len(surfaces)
+    print("DEBUG : Surface moyenne :", surface_moyenne)
+
+    # Étape 4 : Détection des objets anormalement grands (plus que 80% plus grand que la moyenne), suspectés de contenir plusieurs objets fusionnés
+    objets_trop_grands = [surface > 1.8 * surface_moyenne for surface in surfaces]
+
+    # Étape 5 : Visualisation de tous les objets, avec mise en évidence des objets suspects
+    visualisation(matrice_gris, liste_objets, boites_englobantes, objets_trop_grands)
+
+    # Étape 6 : Correction des objets suspects en essayant de les diviser en objets distincts
+    objets_additionnels = correction_des_doublons(matrice_gris, boites_englobantes, objets_trop_grands)
+
+    # Retourne le nombre total d’objets détectés, y compris ceux issus de la correction des doublons
+    return len(liste_objets) + objets_additionnels
+
+def main():
+    # Vérifier si un argument a été passé en ligne de commande
+    if len(sys.argv) > 1:
+        # Si un argument est passé, utiliser le premier argument comme nom de fichier
+        file = sys.argv[1]
+    else:
+        # Sinon, demander à l'utilisateur de saisir le nom du fichier
+        file = input("Veuillez entrer le nom de l'image dont il faut commpter les objets : ")
+
+    # Afficher le résultat de compter_objets
+    print("NOMBRE FINAL D'OBJETS dans", file, ":", compter_objets(file))
+
+if __name__ == "__main__":
+    main()
+</pre>
+  </div>
+  
+  <div class="column side">
+    <img src="../images/logo-python.png" alt="logo python" width = 100 align="right">
+  </div>
+</div>
+
+<div class="footer">
+<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+</div>
+
+</body>
+</html>

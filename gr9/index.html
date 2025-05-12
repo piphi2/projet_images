@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mini-projet</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<div class="header">
+<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+</div>
+
+<div class="topnav">
+  <a  href="../index.html">Accueil</a>
+  <a  class="active" href="index.html">Thème</a>
+  <a href="page1.html">Principe mis en oeuvre</a>
+  <a href="page2.html">Programme Python</a>
+  <a href="page3.html">Compléments</a>
+</div>
+
+ 
+<div class="row">
+  <div class="column side">
+    
+    <img src="../images/logo-nsi.png" alt="logo nsi" width = 100 align="left">
+  </div>
+  
+<div class="column middle">
+  <h1>Mini-projet image : Groupe 9</h1>
+  <h2>Thème : Compter les objets</h2>
+
+  <p>Ce projet a pour but de détecter automatiquement et de compter le nombre d’objets présents dans une image. À partir d'une image couleur (RGB), le programme convertit l’image en niveaux de gris pour faciliter le traitement, puis identifie les zones de pixels similaires, correspondant à des objets distincts.</p>
+
+  <p>Chaque objet détecté est représenté en couleur sur une image de sortie, avec une boîte englobante (ou "bounding box") qui permet de visualiser sa position et sa taille et de vérifier la précision de la détection.</p>
+
+  <p>Ce type de traitement est utile dans des contextes variés comme le comptage de cellules, de graines, de pièces mécaniques ou encore pour détecter des défauts dans une chaîne de production.</p>
+
+  <p>Dans l’exemple ci-dessous, le programme analyse une image de graines. Après prétraitement et correction des doublons (en bleu), il parvient à détecter et décompter correctement les 80 graines présentes sur l’image <code>graines_2.jpg</code>.</p>
+
+  <img src="data/graines_2.jpg" alt="image de départ" width = 250>
+  <img src="data/graines_2_output.jpg" alt="image traitée" width = 250>
+  <p>Pour utiliser ce programme, on peut l'appeler dans la ligne de commande : <code>python3 compter_image.py graines_2.jpg</code> ou l'invoquer sans argument ou dans Thonny et il demandera un fichier à analyser dans le terminal : </br><pre align="left">
+>>> %Run compter_image.py
+Veuillez entrer le nom de l'image dont il faut commpter les objets : graines_1.png
+DEBUG : Proportion de pixels clairs : 0.8561171875
+Nombre d'objets détectés : 80
+DEBUG : Nombre total d'entités explorées : 517
+DEBUG : Surface moyenne : 1392.5
+NOMBRE FINAL D'OBJETS dans graines_1.png : 80
+</pre>
+</div>
+  
+  <div class="column side">
+    <img src="../images/logo-python.png" alt="logo python" width = 100 align="right">
+  </div>
+</div>
+
+<div class="footer">
+<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+</div>
+
+</body>
+</html>

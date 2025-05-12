@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mini-projet</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+<div class="header">
+<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+</div>
+
+<div class="topnav">
+  <a href="/TP_images/nsi1_2023/index.html">Accueil</a>
+  <a href="index.html">Thème</a>
+  <a href="page1.html">Principe mis en oeuvre</a>
+  <a href="page2.html">Programme Python</a>
+  <a class="active" href="page3.html">Compléments</a>
+</div>
+ 
+<div class="row">
+  <div class="column side">
+    
+    <img src="../images/logo-nsi.png" alt="logo nsi" width = 100 align="left">
+  </div>
+  
+  <div class="column middle">
+    <h2>Compléments</h2>
+	 <h1>À quoi sert la fusion d’images ?</h1>
+  <p>
+    La fusion d’images est utilisée dans de nombreux domaines :
+    <ul>
+      <li><strong>Photographie</strong> : pour créer des effets visuels ou des compositions artistiques.</li>
+      <li><strong>Médical</strong> : pour superposer des radiographies avec d'autres types d'imagerie médicale.</li>
+     
+    </ul>
+  </p>
+  <p>
+    On pourrait aller plus loin en développant une application web 
+    où l’utilisateur peut importer deux images à fusionner.
+  </p>
+  <p>
+  Il y a différentes façon de fusionner une image de différentes manière
+  comme :
+  </p>
+  <pre>
+  from PIL import Image
+
+#charger les 2 images
+image1 = Image.open("raspberry.png")
+image2 = Image.open("python.png")
+
+# créer une nouvelle image vide
+largueur,hauteur=image1.size
+image_resultat=Image.new("RGB",(largueur,hauteur))
+
+#parcourir tous les pixels
+for x in range ( largueur):
+    for y in range(hauteur):
+        p1=image1.getpixel((x,y))
+        r1=p1[0]
+        g1=p1[1]
+        b1=p1[2]
+
+        p2=image2.getpixel((x,y))
+        r2=p2[0]
+        g2=p2[1]
+        b2=p2[2]
+
+
+
+        r=max(r1,r2)
+        g=max(g1,g2)
+        b=max(b1,b2)
+
+        #placer le pixel dans l'image
+        image_resultat.putpixel((x,y),(r,b,g))
+
+
+
+#sauvegarde + afficher
+image_resultat.save("image_fusion2.png")
+image_resultat.show()
+
+</pre>
+  <img src="data/image_fusion2.png" alt="image-depart" width = 250>
+
+<p>
+Une autre façon :
+</p>
+<pre>
+from PIL import Image
+
+#charger les 2 images
+image1 = Image.open("raspberry.png")
+image2 = Image.open("python.png")
+
+# créer une nouvelle image vide
+largeur,hauteur = image1.size
+image_resultat=Image.new("RGB",(largeur,hauteur))
+
+# Copier la moitié gauche de image1
+for x in range(largeur // 2):
+    for y in range(hauteur):
+        pixel = image1.getpixel((x, y))
+        image_resultat.putpixel((x, y), pixel)
+
+# Copier la moitié droite de image2
+for x in range(largeur // 2, largeur):
+    for y in range(hauteur):
+        pixel = image2.getpixel((x, y))
+        image_resultat.putpixel((x, y), pixel)
+
+
+#sauvegarde + afficher
+image_resultat.save("image_fusion3.png")
+image_resultat.show()
+</pre>
+ <img src="data/image_fusion3.png" alt="image-depart" width = 250>
+  </div>
+  
+  <div class="column side">
+    <img src="../images/logo-python.png" alt="logo python" width = 100 align="right">
+  </div>
+</div>
+
+<div class="footer">
+<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mini-projet</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+<div class="header">
+<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+</div>
+
+<div class="topnav">
+  <a href="/TP_images/nsi1_2023/index.html">Accueil</a>
+  <a href="index.html">Thème</a>
+  <a class="active" href="page1.html">Principe mis en oeuvre</a>
+  <a href="page2.html">Programme Python</a>
+  <a href="page3.html">Compléments</a>
+</div>
+ 
+<div class="row">
+  <div class="column side">
+    <img src="../images/logo-nsi.png" alt="logo nsi" width = 100 align="left">
+  </div>
+  
+  <div class="column middle">
+    <h2>Principe</h2>
+
+    <h3>Prérequis pour le bon fonctionnement du programme</h3>
+    <p>
+      Le programme de détection d’objets est conçu pour fonctionner correctement dans des conditions précises :
+    </p>
+    <ul>
+      <li>L’image doit avoir un fond d’écran uni ou très légèrement nuancé.</li>
+      <li>Les bords de l’image doivent majoritairement contenir la couleur de fond.</li>
+      <li>Chaque objet doit être constitué de pixels proches en couleur les uns des autres, pour permettre leur détection comme entité unique.</li>
+    </ul>
+
+	<h3>Étapes de fonctionnement du programme</h3>
+	<p>
+	  Le programme commence par l’ouverture de l’image et sa conversion en mode RGB, ce qui permet de traiter chaque pixel indépendamment selon ses trois composantes de couleur : rouge (R), vert (G) et bleu (B).
+	</p>
+	<p>
+	  La première étape consiste à détecter la couleur dominante des bords de l’image, qui est supposée correspondre à la couleur de fond. Le programme parcourt tout le périmètre de l’image, c’est-à-dire les bords supérieur, inférieur, gauche et droit, et enregistre toutes les couleurs de ces pixels. À partir de cette collecte, il utilise un compteur pour déterminer la couleur la plus fréquente. Cette couleur sera ensuite utilisée pour identifier le fond lors de l’analyse des objets.
+	</p>
+	<p>
+	  Une fois la couleur de fond identifiée, le programme passe à l’analyse des pixels internes de l’image. Pour chaque pixel, il vérifie si sa couleur correspond à celle du fond. Si ce n’est pas le cas, cela signifie que le pixel fait partie d’un objet. À ce moment-là, le programme lance un algorithme de "flood fill" à partir de ce pixel. Cet algorithme, inspiré de la méthode de remplissage utilisée dans les logiciels de dessin, explore les pixels voisins (haut, bas, gauche, droite) qui ont des couleurs similaires au pixel de départ, et les ajoute à l’objet détecté.
+	</p>
+	<p>
+	  Le processus de "flood fill" se poursuit tant que des pixels voisins ayant la même couleur sont trouvés. Lorsque le programme rencontre un pixel de couleur différente, il cesse l'exploration dans cette direction. Chaque objet détecté est donc constitué d'un ensemble de pixels connectés les uns aux autres, de manière à former une zone continue. Dès qu’un objet est détecté, le programme recolore les pixels de cet objet en couleur de fond pour éviter de les recomptabiliser lors des itérations suivantes.
+	</p>
+    <img src="data/explication stack.png" alt="explication stack">
+	<p>
+	  Après avoir détecté un objet et modifié sa couleur pour le marquer, le programme enregistre sa taille, c’est-à-dire le nombre de pixels qui composent cet objet. Cependant, pour éviter que des objets très grands (potentiellement plusieurs objets collés) ne soient comptés comme un seul, une vérification est effectuée : si un objet dépasse 150 pixels, sa taille est comparée à la taille médiane des objets détectés. Si l’objet est beaucoup plus grand que la médiane, le programme suppose qu’il peut être constitué de plusieurs objets collés et ajustera le comptage en estimant combien d’objets seraient dans cette zone en fonction de la taille médiane (uniquement si l'utilisateur admet que les objets doivent avoir la meme surface).
+	</p>
+    <img src="data/explication coupure objet.png" alt="explication coupure objet" width="450">
+	<p>
+	  Enfin, le programme renvoie le nombre total d’objets détectés, avec ou sans ajustement, selon que les objets sont supposés être de taille uniforme ou non comme dit precedemment.
+	</p>
+
+  </div>
+  
+  <div class="column side">
+    <img src="../images/logo-python.png" alt="logo python" width = 100 align="right">
+  </div>
+</div>
+
+<div class="footer">
+<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+</div>
+
+</body>
+</html>

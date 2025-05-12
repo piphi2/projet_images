@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<title>Mini-projet de stéganographie</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="../style.css">
+	</head>
+	<body>
+
+		<div class="header">
+			<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+		</div>
+
+		<div class="topnav">
+			<a href="../index.html">Accueil</a>
+			<a class="active" href="index.html">Thème</a>
+			<a href="page1.html">Principe mis en oeuvre</a>
+			<a href="page2.html">Programme Python</a>
+			<a href="page3.html">Compléments</a>
+		</div>
+
+ 
+		<div class="row">
+		
+			<div class="column side">
+				<img src="../images/logo-nsi.png" alt="logo nsi" width = 100 align="left">
+			</div>
+	  
+			<div class="column middle">
+				<h1>Mini-projet stéganographie</h1>
+				<h2>Thème : cacher une image dans une autre grâce à la méthode de stéganographie.</h2>
+				<p>On chiffre une image RGB d'une certaine résolution dans une autre image RGB de même résolution.</p>
+				
+				<div class="container" style="border:solid">
+					<img style="margin:5px;width:150px" src="data/science.png" alt="science-avant">
+					<img style="margin:5px;width:150px" src="data/hacker.png" alt="hacker-avant">
+					<h4 style="text-decoration:underline">Images de départ</h4>
+					<p>Image dans laquelle on va cacher puis image à cacher</p>
+				</div>
+				
+				<br/>
+				
+				<div class="container" style="border:solid">
+					<img style="margin:5px;width:300px" src="data/science avec hacker caché.png" alt="hacker-avant">
+					<h4 style="text-decoration:underline">Image chiffrée</h4>	
+					<p>(Il est possible ici de voir à peu près les 0 et les 1 de l'image du hacker car l'image science est assez "transparente")</p>
+				</div>
+				
+				<br/>
+				
+				<div class="container" style="border:solid">
+					<img style="margin:5px;width:300px" src="data/image déchiffrée.png" alt="hacker-avant">
+					<h4 style="text-decoration:underline">Image du hacker retrouvée</h4>
+					<p>(Légèrement différente car 4 LSB à zéro)</p>
+				</div>
+					
+			</div>
+	  
+			<div class="column side">
+				<img src="../images/logo-python.png" alt="logo python" width=100 align="right">
+			</div>
+		</div>
+
+		<div class="footer">
+			<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+		</div>
+
+	</body>
+</html>

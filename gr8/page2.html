@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mini-projet</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+<div class="header">
+<img src="../images/logo_NSI_mechain.jpg" alt="logo nsi" width=300>
+</div>
+
+<div class="topnav">
+  <a href="../index.html">Accueil</a>
+  <a href="index.html">Thème</a>
+  <a href="page1.html">Principe mis en oeuvre</a>
+  <a class="active" href="page2.html">Programme Python</a>
+  <a href="page3.html">Compléments</a>
+</div>
+ 
+<div class="row">
+  <div class="column side">
+    
+    <img src="../images/logo-nsi.png" alt="logo nsi" width = 100 align="left">
+  </div>
+  
+  <div class="column middle" >
+    <h2>Programme Python</h2>
+  </div>
+  <div class="column center" >	
+	<pre>
+from PIL import Image
+
+def retourner(image, choix):
+    largeur, hauteur = image.size
+
+    if choix == 1:
+        image_tournee = Image.new("RGB", (hauteur, largeur))
+        for x in range(largeur):
+            for y in range(hauteur):
+                pixel = image.getpixel((x, y))
+                image_tournee.putpixel((hauteur - 1 - y, x), pixel)
+        return image_tournee
+
+    elif choix == 2:
+        image_tournee = Image.new("RGB", (largeur, hauteur))
+        for x in range(largeur):
+            for y in range(hauteur):
+                pixel = image.getpixel((x, y))
+                image_tournee.putpixel((largeur - 1 - x, hauteur - 1 - y), pixel)
+        return image_tournee
+
+    elif choix == 3:
+        image_tournee = Image.new("RGB", (hauteur, largeur))
+        for x in range(largeur):
+            for y in range(hauteur):
+                pixel = image.getpixel((x, y))
+                image_tournee.putpixel((y, largeur - 1 - x), pixel)
+        return image_tournee
+
+    else:
+        return None
+
+image = Image.open("VACHE.jpg")
+
+image_tournee = retourner(image, choix)
+
+if image_tournee:
+    image_tournee.save("image_tournee.jpg")
+    image_tournee.show()
+    print("L'image a été tournée et enregistrée sous le nom 'image_tournee.jpg' !")
+else:
+    print("Erreur sur le nombre de quart de tour !")
+
+
+
+
+
+	</pre>
+  </div>
+  
+  <div class="column side">
+    <img src="../images/logo-python.png" alt="logo python" width = 100 align="right">
+  </div>
+</div>
+
+<div class="footer">
+<h3>Spécialité NSI - Lycée Pierre Méchain LAON</h3>
+</div>
+
+</body>
+</html>
